@@ -1,9 +1,7 @@
 # 🌐 LinguaVerse: Language Translation Tool
 
-> **Internship Project - Task 1**  
-> **Domain:** Artificial Intelligence & Machine Learning (CSE AI-ML)  
-> **Tech Stack:** Python, Flask, HTML5, CSS3, JavaScript, REST API
-
+>project live demo
+>https://drive.google.com/file/d/1bN5_L-SMgOSIKbbAuGsOrCYLpsBrQDvH/view?usp=sharing
 ---
 
 ## 📌 1. Project Overview
