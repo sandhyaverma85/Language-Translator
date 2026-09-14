@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Translation Tool - AI/ML Project</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- Header Section -->
+        <header class="app-header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-language"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>AI <span class="badge">Language Translator</span></h1>
+                    <p class="subtitle">Internship Task 1 &bull; CSE AI-ML Project</p>
+                </div>
+            </div>
+            <div class="header-badges">
+                <span class="pill-badge"><i class="fa-solid fa-bolt"></i> Real-time API</span>
+                <span class="pill-badge"><i class="fa-solid fa-shield-halved"></i> Secure Backend</span>
+            </div>
+        </header>
+
+        <!-- Main Card Container -->
+        <main class="translator-container">
+            
+            <!-- Toast Notification Container -->
+            <div id="toastNotification" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <i id="toastIcon" class="fa-solid fa-circle-exclamation"></i>
+                <span id="toastMessage">An error occurred</span>
+            </div>
+
+            <!-- Translation Workspace Box -->
+            <div class="translation-grid">
+                
+                <!-- SOURCE TEXT SECTION -->
+                <div class="trans-panel source-panel">
+                    <div class="panel-header">
+                        <div class="lang-select-wrapper">
+                            <label for="sourceLang"><i class="fa-solid fa-globe"></i> From:</label>
+                            <select id="sourceLang" class="custom-select">
+                                {% for code, name in languages.items() %}
+                                    <option value="{{ code }}" {% if code == 'auto' %}selected{% endif %}>
+                                        {{ name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button id="clearSourceBtn" class="icon-btn" title="Clear text" aria-label="Clear source text">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+
+                    <div class="textarea-wrapper">
+                        <textarea 
+                            id="sourceText" 
+                            placeholder="Type or paste text here to translate..." 
+                            maxlength="5000"
+                            rows="7"
+                            spellcheck="true"
+                        ></textarea>
+                    </div>
+
+                    <div class="panel-footer">
+                        <div class="panel-actions">
+                            <button id="sourceSpeakBtn" class="icon-btn-secondary" title="Listen source text" disabled>
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+                        <span id="charCount" class="char-indicator">0 / 5000</span>
+                    </div>
+                </div>
+
+                <!-- SWAP BUTTON CONTROLLER -->
+                <div class="swap-controller">
+                    <button id="swapLangBtn" class="swap-btn" title="Swap languages and text" aria-label="Swap Languages">
+                        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                    </button>
+                </div>
+
+                <!-- TARGET TRANSLATION SECTION -->
+                <div class="trans-panel target-panel">
+                    <div class="panel-header">
+                        <div class="lang-select-wrapper">
+                            <label for="targetLang"><i class="fa-solid fa-flag"></i> To:</label>
+                            <select id="targetLang" class="custom-select">
+                                {% for code, name in languages.items() if code != 'auto' %}
+                                    <option value="{{ code }}" {% if code == 'hi' %}selected{% endif %}>
+                                        {{ name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button id="clearTargetBtn" class="icon-btn" title="Clear result" aria-label="Clear translated text">
+                            <i class="fa-solid fa-eraser"></i>
+                        </button>
+                    </div>
+
+                    <div class="textarea-wrapper result-wrapper">
+                        <div id="loadingOverlay" class="loading-overlay hidden">
+                            <div class="spinner"></div>
+                            <span>Translating with AI...</span>
+                        </div>
+                        <textarea 
+                            id="targetText" 
+                            placeholder="Translated output will appear here..." 
+                            rows="7" 
+                            readonly
+                        ></textarea>
+                    </div>
+
+                    <div class="panel-footer">
+                        <div class="panel-actions">
+                            <button id="copyBtn" class="action-pill-btn" title="Copy to clipboard" disabled>
+                                <i class="fa-regular fa-copy"></i>
+                                <span id="copyBtnText">Copy</span>
+                            </button>
+                            <button id="targetSpeakBtn" class="action-pill-btn" title="Listen translation" disabled>
+                                <i class="fa-solid fa-volume-high"></i>
+                                <span>Speak</span>
+                            </button>
+                        </div>
+                        <span id="targetWordCount" class="char-indicator">0 words</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Action Bar -->
+            <div class="action-bar">
+                <button id="translateBtn" class="btn-primary">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Translate Now</span>
+                </button>
+            </div>
+
+            <!-- Project Feature Highlights -->
+            <div class="features-row">
+                <div class="feature-card">
+                    <i class="fa-solid fa-bolt-lightning feature-icon"></i>
+                    <div>
+                        <h4>Fast & Dynamic</h4>
+                        <p>Asynchronous AJAX requests without page reloads</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <i class="fa-solid fa-lock feature-icon"></i>
+                    <div>
+                        <h4>Secure Architecture</h4>
+                        <p>API keys & credentials isolated securely on Flask server</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <i class="fa-solid fa-headphones-simple feature-icon"></i>
+                    <div>
+                        <h4>Speech Synthesis</h4>
+                        <p>Integrated Web Speech API for multi-lingual audio playback</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Designed & Developed for <strong>CSE AI-ML Internship Assessment</strong></p>
+            <p class="tech-stack">Built with Python &bull; Flask &bull; JavaScript &bull; Translation Engine</p>
+        </footer>
+    </div>
+
+    <!-- Custom Script -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
